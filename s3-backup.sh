@@ -6,7 +6,8 @@ BACKUPDIR="/var/backups/logs"
 RMWORK="rm -rf"
 COPY2S3="aws s3 mv"
 SRVNAME="apache"
-S3FOLDER="s3://crosslblanco/logs/${SRVNAME}"
+HOST=$(hostname)
+S3FOLDER="s3://crosslblanco/backups/logs/${HOST}/${SRVNAME}"
 
 echo "Creating and encapsulating logs"
 ${COMPRESS} ${BACKUPDIR}/${SRVNAME}-${DATE}.tar.gz ${LOGDIR}
