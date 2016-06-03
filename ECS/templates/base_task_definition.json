@@ -1,0 +1,92 @@
+{
+    "family": "task-$1", 
+    "containerDefinitions": [
+        {
+            "name": "mysql-$1", 
+            "image": "912965902418.dkr.ecr.us-east-1.amazonaws.com/geppetto-mysql:latest",
+            "cpu": 0, 
+            "memory": 256, 
+            "portMappings": [
+                {
+                    "containerPort": 3306
+                }
+            ], 
+            "essential": true, 
+            "entryPoint": [
+                ""
+            ], 
+            "command": [
+                ""
+            ], 
+            "environment": [
+                {
+                    "name": "MYSQL_ROOT_PASSWORD", 
+                    "value": "${MYSQL_ROOT_PASSWORD}"
+                },
+                {
+                    "name": "MYSQL_USER", 
+                    "value": "${MYSQL_USER}"
+                },
+                {
+                    "name": "MYSQL_PASSWORD", 
+                    "value": "${MYSQL_PASSWORD}"
+                }
+            ], 
+            "mountPoints": [
+                {
+                    "sourceVolume": "/home/shared/$1/mysql", 
+                    "containerPath": "/docker-entrypoint-initdb.d", 
+                    "readOnly": false
+                }
+            ], 
+            "hostname": "mysql", 
+            "readonlyRootFilesystem": false
+        },
+        {
+            "name": "tomcat-$1", 
+            "image": "912965902418.dkr.ecr.us-east-1.amazonaws.com/geppetto-tomcat:latest", 
+            "cpu": 0, 
+            "memory": 256, 
+            "links": [
+                "mysql-$1:mydb"
+            ], 
+            "portMappings": [
+                {
+                    "containerPort": 8080
+                }
+            ], 
+            "mountPoints": [
+                {
+                    "sourceVolume": "/home/shared/$1/tomcat", 
+                    "containerPath": "/docker-entrypoint-initapp.d", 
+                    "readOnly": false
+                }
+            ], 
+            "hostname": "tomcat", 
+            "readonlyRootFilesystem": false
+        },
+        {
+            "name": "nodejs-$1", 
+            "image": "912965902418.dkr.ecr.us-east-1.amazonaws.com/geppetto-node:latest", 
+            "cpu": 0, 
+            "memory": 256, 
+            "links": [
+                "mysql-$1:mydb"
+            ], 
+            "portMappings": [
+                {
+                    "containerPort": 9090
+                }
+            ], 
+            "mountPoints": [
+                {
+                    "sourceVolume": "/home/shared/$1/nodejs", 
+                    "containerPath": "/docker-entrypoint-initapi.d", 
+                    "readOnly": false
+                }
+            ], 
+            "hostname": "nodejs", 
+            "readonlyRootFilesystem": false
+        }
+    ]
+}
