@@ -7,8 +7,9 @@ TEMPLATE="../templates"
 BASEJFILE="${TEMPLATE}/base_task_definition.json"
 CONTBASE=$(cat ${BASEJFILE})
 TMP="/tmp"
-echo "Creating Task Definition file for project ${GEPID}"
-sleep 1
+
+# Creating task difinition parameters
+
 cat << EOF > $TMP/${GEPID}.json
 {
     "family": "task-${GEPID}", 
@@ -126,3 +127,13 @@ cat << EOF > $TMP/${GEPID}.json
 }
 EOF
 cat $TMP/${GEPID}.json | jq .
+
+# Deployment of the task definition in ECS
+
+if [ $(whoami) = root ];
+then
+	aws ecs register-task-definition --cli-input-json file:///tmp/${GEPID}.json
+else
+	sudo aws ecs register-task-definition --cli-input-json file:///tmp/${GEPID}.json
+
+fi
